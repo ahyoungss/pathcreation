@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -14,7 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapPointBounds;
+import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener{
@@ -43,7 +48,30 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         }else {
             checkRunTimePermission();
         }
+
+        MapPolyline polyline = new MapPolyline();
+        polyline.setTag(1000);
+        polyline.setLineColor(Color.argb(128, 255, 51, 0)); // Polyline 컬러 지정.
+
+        // Polyline 좌표 지정.
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(37.537229, 127.005515));
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(37.545024,127.03923));
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(37.527896,127.036245));
+        polyline.addPoint(MapPoint.mapPointWithGeoCoord(37.541889,127.095388));
+
+        // Polyline 지도에 올리기.
+        mapView.addPolyline(polyline);
+
+        // 지도뷰의 중심좌표와 줌레벨을 Polyline이 모두 나오도록 조정.
+        MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
+        int padding = 100; // px
+        mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding));
+
     }
+
+
+
+
 
     @Override
     protected void onDestroy() {
@@ -232,4 +260,10 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
 
     }
+
+
+
+
 }
+
+
